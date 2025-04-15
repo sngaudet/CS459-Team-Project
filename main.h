@@ -12,9 +12,9 @@ static void display() {
 void init(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(800, 600);
-    glutInitWindowPosition(100, 100);
-    glutCreateWindow("OpenGL Window");
+    glutInitWindowSize(1100, 700);
+    glutInitWindowPosition(100, 0);
+    glutCreateWindow("Team Project");
 
     glClearColor(0.0, 0.0, 0.0, 1.0);
 
