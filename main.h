@@ -12,9 +12,7 @@ void display();
 
 void init(int argc, char** argv);
 
-void run() {
-     glutMainLoop();
-}
+void run();
 
 int main(int argc, char** argv);
 

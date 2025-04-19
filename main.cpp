@@ -16,21 +16,21 @@ void display()
     glFlush();
 }
 
-void init(int argc, char** argv) {
+void initWindow(int argc, char** argv) {
     glutInit(&argc, argv);
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(700, 700);
     glutInitWindowPosition(100, 0);
     glutCreateWindow("Team Project");
-
     glClearColor(0.0, 0.0, 0.0, 1.0);
     //glEnable(GL_DEPTH_TEST);
-
-    glutDisplayFunc(display);
 }
 
 int main(int argc, char** argv) {
     init(argc, argv);
-    run();
+    
+    glutDisplayFunc(display);
+    
+    glutMainLoop();
     return 0;
 }
