@@ -3,6 +3,10 @@
 
 InputManager* input = new InputManager();
 
+float ballX = 0.0f;
+float ballY = 0.0f;
+float ballZ = -5.0f;
+
 void initWindow(int argc, char** argv) {
     // create window
     glutInit(&argc, argv);
@@ -23,6 +27,24 @@ void keyboard(unsigned char key, int x, int y)
 }
 void specialKeyboard(int key, int x, int y)
 {
+    float step = 0.2f; // how quickly to move
+
+    switch (key) {
+    case GLUT_KEY_LEFT:
+        ballX -= step;
+        break;
+    case GLUT_KEY_RIGHT:
+        ballX += step;
+        break;
+    case GLUT_KEY_UP:
+        ballY += step;
+        break;
+    case GLUT_KEY_DOWN:
+        ballY -= step;
+        break;
+    }
+
+    glutPostRedisplay();
 }
 void mouse(int button, int state, int x, int y)
 {
@@ -74,6 +96,14 @@ void drawBox()
     glEnd();
 }
 
+void drawBall() {
+    glPushMatrix();
+    glTranslatef(ballX, ballY, ballZ);  // move to ball's current position
+    glColor3f(1.0f, 0.5f, 0.0f);
+    glutSolidSphere(0.5, 30, 30);
+    glPopMatrix();
+}
+
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -85,8 +115,10 @@ void display()
         0.0f, 0.1f, 0.0f
     );
 
-    glRotatef(45, 0.0f, 1.0f, 0.0f);
-    drawBox();
+    //glRotatef(45, 0.0f, 1.0f, 0.0f);
+    //drawBox();
+    //glTranslatef(0.5, 0, -50);
+    drawBall();
 
     glFlush();
     glutSwapBuffers();
@@ -111,6 +143,9 @@ int main(int argc, char** argv) {
     // render
     glutDisplayFunc(display);
     glutReshapeFunc(resize);
+
+    glutSpecialFunc(specialKeyboard); // movement for the ball
+
     // loop
     glutMainLoop();
     return 0;
