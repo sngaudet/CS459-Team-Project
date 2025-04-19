@@ -16,9 +16,11 @@ class InputManager
 		bool leftPressed;
 		bool prevRightPressed;
 		bool rightPressed;
-	} m;
+	};
 	
 public:
+	Mouse m;
+
 	void keyboard(unsigned char key, int x, int y)
 	{
 
