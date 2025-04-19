@@ -1,4 +1,34 @@
 #include "main.h"
+#include "input_manager.cpp"
+
+InputManager* input = new InputManager();
+
+void initWindow(int argc, char** argv) {
+    glutInit(&argc, argv);
+    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
+    glutInitWindowSize(700, 700);
+    glutInitWindowPosition(100, 0);
+    glutCreateWindow("Team Project");
+    glClearColor(0.0, 0.0, 0.0, 1.0);
+    //glEnable(GL_DEPTH_TEST);
+}
+
+void keyboard(unsigned char key, int x, int y)
+{
+    input->keyboard(key, x, y);
+}
+void specialKeyboard(int key, int x, int y)
+{
+    input->specialKeyboard(key, x, y);
+}
+void mouse(int button, int state, int x, int y)
+{
+    input->mouse(button, state, x, y);
+}
+void mouseMotion(int x, int y)
+{
+    input->mouseMotion(x, y);
+}
 
 void display()
 {
@@ -16,19 +46,13 @@ void display()
     glFlush();
 }
 
-void initWindow(int argc, char** argv) {
-    glutInit(&argc, argv);
-    glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
-    glutInitWindowSize(700, 700);
-    glutInitWindowPosition(100, 0);
-    glutCreateWindow("Team Project");
-    glClearColor(0.0, 0.0, 0.0, 1.0);
-    //glEnable(GL_DEPTH_TEST);
-}
-
 int main(int argc, char** argv) {
-    init(argc, argv);
-    
+    initWindow(argc, argv);
+    // input
+    glutKeyboardFunc(keyboard);
+    glutMouseFunc(mouse);
+    glutMotionFunc(mouseMotion);
+    // render
     glutDisplayFunc(display);
     
     glutMainLoop();

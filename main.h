@@ -5,14 +5,15 @@
 #include <iostream>
 #include <Windows.h>
 
-static GLfloat position[] = { 10.0, 10.0, 10.0, 1.0 };
-static GLdouble cpos[] = { 0.0, 10.0, 200.0 };
-
+// window
+void initWindow(int argc, char** argv);
+// inputs
+void keyboard(unsigned char key, int x, int y);
+void specialKeyboard(int key, int x, int y);
+void mouse(int button, int state, int x, int y);
+void mouseMotion(int x, int y);
+// render
 void display();
-
-void init(int argc, char** argv);
-
-void run();
 
 int main(int argc, char** argv);
 
