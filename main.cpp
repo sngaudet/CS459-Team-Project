@@ -1,11 +1,7 @@
 #include "main.h"
-#include "paddle.cpp"
-#include "camera.cpp"
 #include "input_manager.cpp"
 
-Camera* camera = new Camera();
 InputManager* input = new InputManager();
-Paddle* player1Paddle = new Paddle(0, 0, -10, 1, 2, 1);
 
 void initWindow(int argc, char** argv) {
     // create window
@@ -20,17 +16,9 @@ void initWindow(int argc, char** argv) {
     glEnable(GL_DEPTH_TEST);
     glClearDepth(1.0f);
 }
-float t = 0;
+
 void keyboard(unsigned char key, int x, int y)
 {
-    if (key == 'w')
-    {
-        camera->z -= 1;
-    }
-    if (key == 's')
-    {
-        camera->z += 1;
-    }
     glutPostRedisplay();
 }
 void specialKeyboard(int key, int x, int y)
@@ -43,6 +31,7 @@ void mouse(int button, int state, int x, int y)
 void mouseMotion(int x, int y)
 {
     input->mouseMotion(x, y);
+
     glutPostRedisplay();
 }
 
@@ -89,9 +78,15 @@ void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
-    camera->lookAt();
+
+    gluLookAt(
+        0.0f, 0.0f, 3.0f,
+        0.0f, 0.0f, 0.0f,
+        0.0f, 0.1f, 0.0f
+    );
+
+    glRotatef(45, 0.0f, 1.0f, 0.0f);
     drawBox();
-    player1Paddle->drawPaddle();
 
     glFlush();
     glutSwapBuffers();
