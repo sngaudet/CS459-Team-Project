@@ -21,6 +21,27 @@ void initWindow(int argc, char** argv) {
     glClearDepth(1.0f);
 }
 
+void initLighting() {
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    // light properties
+    GLfloat lightAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    GLfloat lightDiffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+    GLfloat lightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    GLfloat lightPosition[] = { 1.0f, 1.0f, 1.0f, 0.0f };
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+
+    // Enable color tracking for materials
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+}
+
 void keyboard(unsigned char key, int x, int y)
 {
     glutPostRedisplay();
@@ -94,27 +115,6 @@ void drawBox()
     glVertex3f(0.5f, -0.5f, -0.5f);
     glVertex3f(0.5f, -0.5f, 0.5f);
     glEnd();
-}
-
-void initLighting() {
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-
-    // light properties
-    GLfloat lightAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    GLfloat lightDiffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-    GLfloat lightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-    GLfloat lightPosition[] = { 1.0f, 1.0f, 1.0f, 0.0f };
-
-    glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-
-    // Enable color tracking for materials
-    glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 }
 
 void drawBall() {
