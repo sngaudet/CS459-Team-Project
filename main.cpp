@@ -7,6 +7,7 @@ float ballX = 0.0f;
 float ballY = 0.0f;
 float ballZ = -5.0f;
 
+// Initilizations
 void initWindow(int argc, char** argv) {
     // create window
     glutInit(&argc, argv);
@@ -42,6 +43,7 @@ void initLighting() {
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 }
 
+// Input Controll
 void keyboard(unsigned char key, int x, int y)
 {
     glutPostRedisplay();
@@ -78,6 +80,7 @@ void mouseMotion(int x, int y)
     glutPostRedisplay();
 }
 
+// Drawing
 void drawBox()
 {
     glBegin(GL_QUADS);
@@ -125,6 +128,7 @@ void drawBall() {
     glPopMatrix();
 }
 
+// Display
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
