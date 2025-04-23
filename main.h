@@ -4,6 +4,8 @@
 #include <GL/glut.h> // (or others, depending on the system in use)
 #include <iostream>
 #include <Windows.h>
+#include <cstdlib>
+#include <ctime>
 
 // window
 void initWindow(int argc, char** argv);

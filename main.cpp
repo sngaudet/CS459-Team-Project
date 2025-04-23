@@ -7,6 +7,11 @@ float ballX = 0.0f;
 float ballY = 0.0f;
 float ballZ = -5.0f;
 
+float ballVelocityX = 0.015f;
+float ballVelocityY = 0.015f;
+float ballVelocityZ = 0.02f;
+
+// Initilizations
 void initWindow(int argc, char** argv) {
     // create window
     glutInit(&argc, argv);
@@ -21,6 +26,28 @@ void initWindow(int argc, char** argv) {
     glClearDepth(1.0f);
 }
 
+void initLighting() {
+    glEnable(GL_LIGHTING);
+    glEnable(GL_LIGHT0);
+
+    // light properties
+    GLfloat lightAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
+    GLfloat lightDiffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
+    GLfloat lightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+
+    GLfloat lightPosition[] = { 5.0f, 5.0f, 1.0f, 0.0f };
+
+    glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
+    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
+    glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
+    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
+
+    // Enable color tracking for materials
+    glEnable(GL_COLOR_MATERIAL);
+    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
+}
+
+// Input Controll
 void keyboard(unsigned char key, int x, int y)
 {
     glutPostRedisplay();
@@ -55,6 +82,17 @@ void mouseMotion(int x, int y)
     input->mouseMotion(x, y);
 
     glutPostRedisplay();
+}
+
+// Drawing
+void drawWall() {
+    glBegin(GL_QUADS);
+    glColor3f(0.3f, 0.3f, 0.3f);
+    glVertex3f(-10.0f, -10.0f, -6.0f);
+    glVertex3f(10.0f, -10.0f, -6.0f);
+    glVertex3f(10.0f, 10.0f, -6.0f);
+    glVertex3f(-10.0f, 10.0f, -6.0f);
+    glEnd();
 }
 
 void drawBox()
@@ -104,13 +142,27 @@ void drawBall() {
     glPopMatrix();
 }
 
+void moveBall(int value) {
+    // Move ball
+    //ballX += ballVelocityX;
+    //ballY += ballVelocityY;
+    ballZ -= ballVelocityZ;
+
+    // Bounce off "walls"
+    if (ballZ < -6.0f || ballZ > 5.0f) ballVelocityZ *= -1;
+
+    glutPostRedisplay();
+    glutTimerFunc(16, moveBall, 0); // ~60 FPS
+}
+
+// Display
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
     gluLookAt(
-        0.0f, 0.0f, 3.0f,
+        0.0f, -1.0f, 5.0f,
         0.0f, 0.0f, 0.0f,
         0.0f, 0.1f, 0.0f
     );
@@ -119,6 +171,7 @@ void display()
     //drawBox();
     //glTranslatef(0.5, 0, -50);
     drawBall();
+    drawWall(); // the grey wall is at z=-6
 
     glFlush();
     glutSwapBuffers();
@@ -136,6 +189,7 @@ void resize(int w, int h)
 
 int main(int argc, char** argv) {
     initWindow(argc, argv);
+    initLighting();
     // input
     glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);
@@ -144,7 +198,9 @@ int main(int argc, char** argv) {
     glutDisplayFunc(display);
     glutReshapeFunc(resize);
 
-    glutSpecialFunc(specialKeyboard); // movement for the ball
+    //glutSpecialFunc(specialKeyboard); // movement for the ball // changing ball to move on its own
+    srand(static_cast<unsigned>(time(0))); // seed RNG
+    glutTimerFunc(0, moveBall, 0);
 
     // loop
     glutMainLoop();
