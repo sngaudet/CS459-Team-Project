@@ -7,7 +7,6 @@ float ballX = 0.0f;
 float ballY = 0.0f;
 float ballZ = -5.0f;
 
-// Initilizations
 void initWindow(int argc, char** argv) {
     // create window
     glutInit(&argc, argv);
@@ -22,28 +21,6 @@ void initWindow(int argc, char** argv) {
     glClearDepth(1.0f);
 }
 
-void initLighting() {
-    glEnable(GL_LIGHTING);
-    glEnable(GL_LIGHT0);
-
-    // light properties
-    GLfloat lightAmbient[] = { 0.2f, 0.2f, 0.2f, 1.0f };
-    GLfloat lightDiffuse[] = { 0.8f, 0.8f, 0.8f, 1.0f };
-    GLfloat lightSpecular[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-
-    GLfloat lightPosition[] = { 1.0f, 1.0f, 1.0f, 0.0f };
-
-    glLightfv(GL_LIGHT0, GL_AMBIENT, lightAmbient);
-    glLightfv(GL_LIGHT0, GL_DIFFUSE, lightDiffuse);
-    glLightfv(GL_LIGHT0, GL_SPECULAR, lightSpecular);
-    glLightfv(GL_LIGHT0, GL_POSITION, lightPosition);
-
-    // Enable color tracking for materials
-    glEnable(GL_COLOR_MATERIAL);
-    glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
-}
-
-// Input Controll
 void keyboard(unsigned char key, int x, int y)
 {
     glutPostRedisplay();
@@ -80,7 +57,6 @@ void mouseMotion(int x, int y)
     glutPostRedisplay();
 }
 
-// Drawing
 void drawBox()
 {
     glBegin(GL_QUADS);
@@ -128,7 +104,6 @@ void drawBall() {
     glPopMatrix();
 }
 
-// Display
 void display()
 {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -161,7 +136,6 @@ void resize(int w, int h)
 
 int main(int argc, char** argv) {
     initWindow(argc, argv);
-    initLighting();
     // input
     glutKeyboardFunc(keyboard);
     glutMouseFunc(mouse);
