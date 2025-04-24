@@ -16,7 +16,4 @@ void mouse(int button, int state, int x, int y);
 void mouseMotion(int x, int y);
 // render
 void display();
-
 int main(int argc, char** argv);
-
-
