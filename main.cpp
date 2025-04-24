@@ -9,6 +9,12 @@ float ballVelocityX = 0.015f;
 float ballVelocityY = 0.015f;
 float ballVelocityZ = 0.02f;
 
+float cameraRotationX = 0.0f;
+float cameraRotationY = 0.0f;
+float cameraZoomZ = 5.0f;
+float cameraPanX = 0.0f;
+float cameraPanY = 0.0f;
+
 // Initilizations
 void initWindow(int argc, char** argv) {
     // create window
@@ -111,6 +117,13 @@ void drawBall() {
     glPopMatrix();
 }
 
+// Transfromations
+void transformCamera() {
+    glTranslatef(cameraPanX, cameraPanY, -cameraZoomZ);
+    glRotatef(cameraRotationX, 1.0f, 0.0f, 0.0f);
+    glRotatef(cameraRotationY, 0.0f, 1.0f, 0.0f);
+}
+
 void moveBall(int value) {
     // Move ball
     //ballX += ballVelocityX;
@@ -161,7 +174,7 @@ int main(int argc, char** argv) {
     glutTimerFunc(0, moveBall, 0);
 
     // TEMP, printing camera position
-    glutTimerFunc(5000, printCameraPosition, 0);
+    //glutTimerFunc(5000, printCameraPosition, 0);
 
     // loop
     glutMainLoop();

@@ -1,16 +1,15 @@
 #include "main.h"
-#include <vector>
 
 int mouseX, mouseY;
 int mouseMotionX, mouseMotionY;
 bool leftPressed = false;
 bool rightPressed = false;
 
-float cameraRotationX = 0.0f;
-float cameraRotationY = 0.0f;
-float cameraZoomZ = 5.0f;
-float cameraPanX = 0.0f;
-float cameraPanY = 0.0f;
+extern float cameraRotationX;
+extern float cameraRotationY;
+extern float cameraPanX;
+extern float cameraPanY;
+extern float cameraZoomZ;
 
 // Keyboard
 void keyboard(unsigned char key, int x, int y) {
@@ -47,7 +46,7 @@ void mouse(int button, int state, int x, int y) {
         rightPressed = false;
     }
 
-    // MouseWeel
+    // Handle mouse scroll for zoom
     if (button == 3) {
         cameraZoomZ -= 0.5f;
     }
@@ -59,41 +58,21 @@ void mouse(int button, int state, int x, int y) {
 }
 
 void mouseMotion(int x, int y) {
-    if (leftPressed) {
+    if (leftPressed || rightPressed) {
         int dx = x - mouseX;
         int dy = y - mouseY;
 
-        cameraRotationX += dy * 0.2f;
-        cameraRotationY += dx * 0.2f;
+        if (leftPressed) {
+            cameraRotationX += dy * 0.2f;
+            cameraRotationY += dx * 0.2f;
+        } else if (rightPressed) {
+            cameraPanX += dx * 0.01f;
+            cameraPanY -= dy * 0.01f;
+        }
 
         mouseX = x;
         mouseY = y;
 
         glutPostRedisplay();
     }
-    else if (rightPressed) {
-        int dx = x - mouseX;
-        int dy = y - mouseY;
-
-        cameraPanX += dx * 0.01f;
-        cameraPanY -= dy * 0.01f;
-
-        mouseX = x;
-        mouseY = y;
-
-        glutPostRedisplay();
-    }
-}
-
-// Camera
-void transformCamera() {
-    glTranslatef(cameraPanX, cameraPanY, -cameraZoomZ);
-    glRotatef(cameraRotationX, 1.0f, 0.0f, 0.0f);
-    glRotatef(cameraRotationY, 0.0f, 1.0f, 0.0f);
-}
-
-void printCameraPosition(int value) {
-    std::cout << "Camera Position: x=0.0, y=-1.0, z=" << cameraZoomZ << std::endl;
-    std::cout << "Camera Rotation (X-axis): " << cameraRotationX << " degrees" << std::endl;
-    glutTimerFunc(5000, printCameraPosition, 0);
 }
