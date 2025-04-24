@@ -11,8 +11,58 @@ extern float cameraPanX;
 extern float cameraPanY;
 extern float cameraZoomZ;
 
+// Add a variable to track the current mode
+enum CameraMode { ZOOM, PAN, ROTATE };
+CameraMode currentMode = ROTATE;
+
 // Keyboard
 void keyboard(unsigned char key, int x, int y) {
+    switch (key) {
+    case '1': // Toggle to Zoom mode
+        currentMode = ZOOM;
+        break;
+    case '2': // Toggle to Pan mode
+        currentMode = PAN;
+        break;
+    case '3': // Toggle to Rotate mode
+        currentMode = ROTATE;
+        break;
+    case 's': // Move up or zoom in
+        if (currentMode == ZOOM) {
+            cameraZoomZ -= 0.5f;
+        } else if (currentMode == PAN) {
+            cameraPanY += 0.1f;
+        } else if (currentMode == ROTATE) {
+            cameraRotationX -= 1.0f;
+        }
+        break;
+    case 'w': // Move down or zoom out
+        if (currentMode == ZOOM) {
+            cameraZoomZ += 0.5f;
+        } else if (currentMode == PAN) {
+            cameraPanY -= 0.1f;
+        } else if (currentMode == ROTATE) {
+            cameraRotationX += 1.0f;
+        }
+        break;
+    case 'd': // Move left
+        if (currentMode == PAN) {
+            cameraPanX -= 0.1f;
+        } else if (currentMode == ROTATE) {
+            cameraRotationY -= 1.0f;
+        }
+        break;
+    case 'a': // Move right
+        if (currentMode == PAN) {
+            cameraPanX += 0.1f;
+        } else if (currentMode == ROTATE) {
+            cameraRotationY += 1.0f;
+        }
+        break;
+    default:
+        break;
+    }
+
     glutPostRedisplay();
 }
 
