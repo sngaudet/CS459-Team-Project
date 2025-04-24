@@ -1,7 +1,5 @@
 #include "main.h"
-#include "input_manager.cpp"
-
-InputManager* input = new InputManager();
+//#include "input_manager.cpp"
 
 float ballX = 0.0f;
 float ballY = 0.0f;
@@ -47,41 +45,12 @@ void initLighting() {
     glColorMaterial(GL_FRONT, GL_AMBIENT_AND_DIFFUSE);
 }
 
-// Input Controll
-void keyboard(unsigned char key, int x, int y)
-{
-    glutPostRedisplay();
-}
-void specialKeyboard(int key, int x, int y)
-{
-    float step = 0.2f; // how quickly to move
-
-    switch (key) {
-    case GLUT_KEY_LEFT:
-        ballX -= step;
-        break;
-    case GLUT_KEY_RIGHT:
-        ballX += step;
-        break;
-    case GLUT_KEY_UP:
-        ballY += step;
-        break;
-    case GLUT_KEY_DOWN:
-        ballY -= step;
-        break;
-    }
-
-    glutPostRedisplay();
-}
-void mouse(int button, int state, int x, int y)
-{
-    input->mouse(button, state, x, y);
-}
-void mouseMotion(int x, int y)
-{
-    input->mouseMotion(x, y);
-
-    glutPostRedisplay();
+// Update input handling to use standalone functions
+void initInputHandlers() {
+    glutKeyboardFunc(keyboard);
+    glutSpecialFunc(specialKeyboard);
+    glutMouseFunc(mouse);
+    glutMotionFunc(mouseMotion);
 }
 
 // Drawing
@@ -156,20 +125,13 @@ void moveBall(int value) {
 }
 
 // Display
-void display()
-{
+void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
-    gluLookAt(
-        0.0f, -1.0f, 5.0f,
-        0.0f, 0.0f, 0.0f,
-        0.0f, 0.1f, 0.0f
-    );
+    // Apply camera transformations
+    transformCamera();
 
-    //glRotatef(45, 0.0f, 1.0f, 0.0f);
-    //drawBox();
-    //glTranslatef(0.5, 0, -50);
     drawBall();
     drawWall(); // the grey wall is at z=-6
 
@@ -177,8 +139,7 @@ void display()
     glutSwapBuffers();
 }
 
-void resize(int w, int h)
-{
+void resize(int w, int h) {
     glMatrixMode(GL_PROJECTION);
     glLoadIdentity();
     glViewport(0, 0, w, h);
@@ -190,17 +151,17 @@ void resize(int w, int h)
 int main(int argc, char** argv) {
     initWindow(argc, argv);
     initLighting();
-    // input
-    glutKeyboardFunc(keyboard);
-    glutMouseFunc(mouse);
-    glutMotionFunc(mouseMotion);
+    initInputHandlers(); // Initialize input handlers
+
     // render
     glutDisplayFunc(display);
     glutReshapeFunc(resize);
 
-    //glutSpecialFunc(specialKeyboard); // movement for the ball // changing ball to move on its own
     srand(static_cast<unsigned>(time(0))); // seed RNG
     glutTimerFunc(0, moveBall, 0);
+
+    // TEMP, printing camera position
+    glutTimerFunc(5000, printCameraPosition, 0);
 
     // loop
     glutMainLoop();

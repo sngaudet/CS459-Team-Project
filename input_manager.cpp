@@ -1,66 +1,99 @@
-#include <gl/glut.h>
+#include "main.h"
+#include <vector>
 
-class InputManager
-{
-	struct Mouse
-	{
-		int prevMouseX;
-		int prevMouseY;
-		int mouseX;
-		int mouseY;
+int mouseX, mouseY;
+int mouseMotionX, mouseMotionY;
+bool leftPressed = false;
+bool rightPressed = false;
 
-		int mouseMotionX;
-		int mouseMotionY;
+float cameraRotationX = 0.0f;
+float cameraRotationY = 0.0f;
+float cameraZoomZ = 5.0f;
+float cameraPanX = 0.0f;
+float cameraPanY = 0.0f;
 
-		bool prevLeftPressed;
-		bool leftPressed;
-		bool prevRightPressed;
-		bool rightPressed;
-	};
-	
-public:
-	Mouse m;
+// Keyboard
+void keyboard(unsigned char key, int x, int y) {
+    glutPostRedisplay();
+}
 
-	void keyboard(unsigned char key, int x, int y)
-	{
+void specialKeyboard(int key, int x, int y) {
+    switch (key) {
+    case GLUT_KEY_LEFT: break;
+    case GLUT_KEY_RIGHT: break;
+    case GLUT_KEY_UP: break;
+    case GLUT_KEY_DOWN: break;
+    }
+    glutPostRedisplay();
+}
 
-	}
+// Mouse
+void mouse(int button, int state, int x, int y) {
+    if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {
+        leftPressed = true;
+        mouseX = x;
+        mouseY = y;
+    }
+    else if (button == GLUT_LEFT_BUTTON && state == GLUT_UP) {
+        leftPressed = false;
+    }
 
-	void specialKeyboard(int key, int x, int y)
-	{
+    if (button == GLUT_RIGHT_BUTTON && state == GLUT_DOWN) {
+        rightPressed = true;
+        mouseX = x;
+        mouseY = y;
+    }
+    else if (button == GLUT_RIGHT_BUTTON && state == GLUT_UP) {
+        rightPressed = false;
+    }
 
-	}
+    // MouseWeel
+    if (button == 3) {
+        cameraZoomZ -= 0.5f;
+    }
+    else if (button == 4) {
+        cameraZoomZ += 0.5f;
+    }
 
-	void mouse(int button, int state, int x, int y)
-	{
-		if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN)
-		{
-			m.leftPressed = true;
-		}
-		else
-		{
-			m.leftPressed = false;
-		}
+    glutPostRedisplay();
+}
 
-		m.prevLeftPressed = m.leftPressed;
-		m.prevRightPressed = m.rightPressed;
-	}
+void mouseMotion(int x, int y) {
+    if (leftPressed) {
+        int dx = x - mouseX;
+        int dy = y - mouseY;
 
-	void mouseMotion(int x, int y)
-	{
-		m.mouseX = x;
-		m.mouseY = y;
+        cameraRotationX += dy * 0.2f;
+        cameraRotationY += dx * 0.2f;
 
-		m.mouseMotionX = m.prevMouseX - m.mouseX;
-		m.mouseMotionY = m.prevMouseX - m.mouseY;
+        mouseX = x;
+        mouseY = y;
 
-		m.prevMouseX = m.mouseX;
-		m.prevMouseY = m.mouseY;
-	}
+        glutPostRedisplay();
+    }
+    else if (rightPressed) {
+        int dx = x - mouseX;
+        int dy = y - mouseY;
 
-	int* getMousePosition()
-	{
-		int mouseVector[2] = { m.mouseX, m.mouseY};
-		return mouseVector;
-	}
-};
+        cameraPanX += dx * 0.01f;
+        cameraPanY -= dy * 0.01f;
+
+        mouseX = x;
+        mouseY = y;
+
+        glutPostRedisplay();
+    }
+}
+
+// Camera
+void transformCamera() {
+    glTranslatef(cameraPanX, cameraPanY, -cameraZoomZ);
+    glRotatef(cameraRotationX, 1.0f, 0.0f, 0.0f);
+    glRotatef(cameraRotationY, 0.0f, 1.0f, 0.0f);
+}
+
+void printCameraPosition(int value) {
+    std::cout << "Camera Position: x=0.0, y=-1.0, z=" << cameraZoomZ << std::endl;
+    std::cout << "Camera Rotation (X-axis): " << cameraRotationX << " degrees" << std::endl;
+    glutTimerFunc(5000, printCameraPosition, 0);
+}
