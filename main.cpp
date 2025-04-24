@@ -1,5 +1,16 @@
 #include "main.h"
-//#include "input_manager.cpp"
+/*
+######### CONTROLS ##########
+Mouse:
+    zoom:    scroll weel
+    Pan:     right click drag
+    Rotate:  left click drag
+
+Keyboard: (1,2,3) to toggle mode 
+    zoom:    1 [w,s]
+    Pan:     2 [w,a,s,d]
+    Rotate:  3 [w,a,s,d]
+*/
 
 float ballX = 0.0f;
 float ballY = 0.0f;
