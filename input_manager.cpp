@@ -66,16 +66,6 @@ void keyboard(unsigned char key, int x, int y) {
     glutPostRedisplay();
 }
 
-void specialKeyboard(int key, int x, int y) {
-    switch (key) {
-    case GLUT_KEY_LEFT: break;
-    case GLUT_KEY_RIGHT: break;
-    case GLUT_KEY_UP: break;
-    case GLUT_KEY_DOWN: break;
-    }
-    glutPostRedisplay();
-}
-
 // Mouse
 void mouse(int button, int state, int x, int y) {
     if (button == GLUT_LEFT_BUTTON && state == GLUT_DOWN) {

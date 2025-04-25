@@ -16,15 +16,37 @@ float ballX = 0.0f;
 float ballY = 0.0f;
 float ballZ = -5.0f;
 
-float ballVelocityX = 0.015f;
-float ballVelocityY = 0.015f;
+float paddleX = 0.0f;
+float paddleY = 0.0f;
+float paddleZ = 8.0f;
+
+float ballVelocityX = 0.011f;
+float ballVelocityY = 0.011f;
 float ballVelocityZ = 0.02f;
 
-float cameraRotationX = 0.0f;
-float cameraRotationY = 0.0f;
-float cameraZoomZ = 5.0f;
+float cameraRotationX = 25.0f; //tilts camera to look down if positive
+float cameraRotationY = -30.0f;
+float cameraZoomZ = 28.0f;
 float cameraPanX = 0.0f;
-float cameraPanY = 0.0f;
+float cameraPanY = -5.0f; // moves camera up if negative
+
+void specialKeyboard(int key, int x, int y) {
+    switch (key) {
+    case GLUT_KEY_LEFT:
+        paddleX -= 0.3f;
+        break;
+    case GLUT_KEY_RIGHT: 
+        paddleX += 0.3f;
+        break;
+    case GLUT_KEY_UP: 
+        paddleY += 0.3f;
+        break;
+    case GLUT_KEY_DOWN: 
+        paddleY -= 0.3f;
+        break;
+    }
+    glutPostRedisplay();
+}
 
 // Initilizations
 void initWindow(int argc, char** argv) {
@@ -33,7 +55,7 @@ void initWindow(int argc, char** argv) {
     glutInitDisplayMode(GLUT_SINGLE | GLUT_RGB | GLUT_DEPTH);
     glutInitWindowSize(700, 700);
     glutInitWindowPosition(100, 0);
-    glutCreateWindow("Team Project");
+    glutCreateWindow("3D Pong");
 
     // initialize perspective
     glClearColor(0.0, 0.0, 0.0, 1.0);
@@ -71,13 +93,70 @@ void initInputHandlers() {
 }
 
 // Drawing
-void drawWall() {
-    glBegin(GL_QUADS);
-    glColor3f(0.3f, 0.3f, 0.3f);
-    glVertex3f(-10.0f, -10.0f, -6.0f);
-    glVertex3f(10.0f, -10.0f, -6.0f);
-    glVertex3f(10.0f, 10.0f, -6.0f);
-    glVertex3f(-10.0f, 10.0f, -6.0f);
+void drawWalls() {
+    // back wall
+    int divisions = 10;
+    glBegin(GL_LINES);
+    glColor3f(1.0f, 0.4f, 0.7f);
+    for (int i = -10; i <= 10; i += 20 / divisions) {
+        // Vertical lines
+        glVertex3f(i, -10.0f, -6.0f);
+        glVertex3f(i, 10.0f, -6.0f);
+
+        // Horizontal lines
+        glVertex3f(-10.0f, i, -6.0f);
+        glVertex3f(10.0f, i, -6.0f);
+    }
+    glEnd();
+
+    // left side wall
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 1.0f, 0.0f);
+    for (int i = -10; i <= 10; i += 20 / divisions) {
+        glVertex3f(-10.0f, -10.0f, i);
+        glVertex3f(-10.0f, 10.0f, i);
+
+        glVertex3f(-10.0f, i, -6.0f);
+        glVertex3f(-10.0f,  i, 10.0f);
+    }
+    glEnd();
+
+    // right side wall
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 1.0f, 0.0f);
+    for (int i = -10; i <= 10; i += 20 / divisions) {
+        glVertex3f(10.0f, -10.0f, i);
+        glVertex3f(10.0f, 10.0f, i);
+
+        glVertex3f(10.0f, i, -6.0f);
+        glVertex3f(10.0f, i, 10.0f);
+    }
+    glEnd();
+
+    // top wall
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 1.0f);
+    for (int i = -10; i <= 10; i += 20 / divisions) {
+        glVertex3f(i, 10.0f, -6.0f);
+        glVertex3f(i, 10.0f, 10.0f);
+    }
+    for (int i = -6; i <= 10; i += 16 / divisions) {
+        glVertex3f(-10.0f, 10.0f, i);
+        glVertex3f(10.0f, 10.0f, i);
+    }
+    glEnd();
+
+    // bottom wall
+    glBegin(GL_LINES);
+    glColor3f(0.0f, 0.0f, 1.0f);
+    for (int i = -10; i <= 10; i += 20 / divisions) {
+        glVertex3f(i, -10.0f, -6.0f);
+        glVertex3f(i, -10.0f, 10.0f);
+    }
+    for (int i = -6; i <= 10; i += 16 / divisions) {
+        glVertex3f(-10.0f, -10.0f, i);
+        glVertex3f(10.0f, -10.0f, i);
+    }
     glEnd();
 }
 
@@ -122,13 +201,20 @@ void drawBox()
 
 void drawBall() {
     glPushMatrix();
-    glTranslatef(ballX, ballY, ballZ);  // move to ball's current position
+    glTranslatef(ballX, ballY, ballZ);
     glColor3f(1.0f, 0.5f, 0.0f);
     glutSolidSphere(0.5, 30, 30);
     glPopMatrix();
 }
 
-// Transfromations
+void drawPaddle() {
+    glColor3f(1.0f, 1.0f, 1.0f);
+    glTranslatef(paddleX, paddleY, paddleZ);
+    glScalef(3.5, 2.0, 0.7);
+    glutSolidCube(1.0);
+}
+
+// Transformations
 void transformCamera() {
     glTranslatef(cameraPanX, cameraPanY, -cameraZoomZ);
     glRotatef(cameraRotationX, 1.0f, 0.0f, 0.0f);
@@ -136,17 +222,52 @@ void transformCamera() {
 }
 
 void moveBall(int value) {
-    // Move ball
-    //ballX += ballVelocityX;
-    //ballY += ballVelocityY;
+    ballX += ballVelocityX;
+    ballY += ballVelocityY;
     ballZ -= ballVelocityZ;
 
-    // Bounce off "walls"
-    if (ballZ < -6.0f || ballZ > 5.0f) ballVelocityZ *= -1;
+    const float ballRadius = 0.5f;
+
+    const float leftWall = -10.0f;
+    const float rightWall = 10.0f;
+    const float bottomWall = -10.0f;
+    const float topWall = 10.0f;
+    const float backWall = -6.0f;
+
+    // Bounce off left and right walls
+    if (ballX - ballRadius <= leftWall || ballX + ballRadius >= rightWall) {
+        ballVelocityX *= -1.0f;
+    }
+
+    // Bounce off top and bottom walls
+    if (ballY - ballRadius <= bottomWall || ballY + ballRadius >= topWall) {
+        ballVelocityY *= -1.0f;
+    }
+
+    // Bounce off the back wall
+    if (ballZ - ballRadius <= backWall) {
+        ballVelocityZ *= -1.0f;
+    }
+
+    const float paddleHalfWidth = 1.75f;
+    const float paddleHalfHeight = 1.0f;
+    const float paddleHalfDepth = 0.35f;
+
+    // Bounce off paddle
+    if (ballZ >= paddleZ - paddleHalfDepth - ballRadius &&
+        ballZ <= paddleZ + paddleHalfDepth + ballRadius) {
+
+        if (ballX >= paddleX - paddleHalfWidth && ballX <= paddleX + paddleHalfWidth &&
+            ballY >= paddleY - paddleHalfHeight && ballY <= paddleY + paddleHalfHeight) {
+            ballVelocityZ *= -1.0f;
+        }
+    }
 
     glutPostRedisplay();
     glutTimerFunc(16, moveBall, 0); // ~60 FPS
 }
+
+
 
 // Display
 void display() {
@@ -157,7 +278,8 @@ void display() {
     transformCamera();
 
     drawBall();
-    drawWall(); // the grey wall is at z=-6
+    drawWalls(); // the grey wall is at z=-6
+    drawPaddle(); // the paddle is at z=5
 
     glFlush();
     glutSwapBuffers();
