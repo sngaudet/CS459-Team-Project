@@ -10,6 +10,12 @@ Keyboard: (1,2,3) to toggle mode
     zoom:    1 [w,s]
     Pan:     2 [w,a,s,d]
     Rotate:  3 [w,a,s,d]
+
+Paddle:
+    up arrow key: move up
+    down arrow key: move down
+    right arrow key: move right
+    left arrow key: move left
 */
 
 float ballX = 0.0f;
@@ -298,6 +304,7 @@ int main(int argc, char** argv) {
     initWindow(argc, argv);
     initLighting();
     initInputHandlers(); // Initialize input handlers
+    printf("Mouse:\nzoom:    scroll wheel\nPan : right click drag\nRotate : left click drag\n\nKeyboard : (1, 2, 3) to toggle mode\nzoom : 1[w, s]\nPan : 2[w, a, s, d]\nRotate : 3[w, a, s, d]\n\nPaddle :\nup arrow key : move up\ndown arrow key : move down\nright arrow key : move right\nleft arrow key : move left");
 
     // render
     glutDisplayFunc(display);
