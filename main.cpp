@@ -118,7 +118,7 @@ void drawWalls() {
     // left side wall
     glBegin(GL_LINES);
     glColor3f(0.0f, 1.0f, 0.0f);
-    for (int i = -10; i <= 10; i += 20 / divisions) {
+    for (int i = -6; i <= 10; i += 20 / divisions) {
         glVertex3f(-10.0f, -10.0f, i);
         glVertex3f(-10.0f, 10.0f, i);
 
@@ -130,7 +130,7 @@ void drawWalls() {
     // right side wall
     glBegin(GL_LINES);
     glColor3f(0.0f, 1.0f, 0.0f);
-    for (int i = -10; i <= 10; i += 20 / divisions) {
+    for (int i = -6; i <= 10; i += 20 / divisions) {
         glVertex3f(10.0f, -10.0f, i);
         glVertex3f(10.0f, 10.0f, i);
 
