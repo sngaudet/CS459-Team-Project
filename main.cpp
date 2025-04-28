@@ -73,9 +73,18 @@ void updatePaddlePosition() {
         paddleY -= 0.1f;
     }
 
-    // Clamp paddle position within the walls
-    paddleX = std::max(leftWall + paddleHalfWidth, std::min(paddleX, rightWall - paddleHalfWidth));
-    paddleY = std::max(bottomWall + paddleHalfHeight, std::min(paddleY, topWall - paddleHalfHeight));
+    // Clamp Paddel Inside bounds
+    if (paddleX < leftWall + paddleHalfWidth) {
+        paddleX = leftWall + paddleHalfWidth;
+    } else if (paddleX > rightWall - paddleHalfWidth) {
+        paddleX = rightWall - paddleHalfWidth;
+    }
+
+    if (paddleY < bottomWall + paddleHalfHeight) {
+        paddleY = bottomWall + paddleHalfHeight;
+    } else if (paddleY > topWall - paddleHalfHeight) {
+        paddleY = topWall - paddleHalfHeight;
+    }
 
     glutPostRedisplay();
 }
