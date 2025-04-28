@@ -213,11 +213,74 @@ void drawBall() {
     glPopMatrix();
 }
 
+void drawBallShadow(float wallX, float wallY, float wallZ, float r, float g, float b) {
+    glPushMatrix();
+
+    // Determine the projection plane and align the shadow
+    if (wallX != 0.0f) {
+        glTranslatef(wallX, ballY, ballZ); // Project onto X plane
+        glRotatef(90.0f, 0.0f, 1.0f, 0.0f); // Align with the X plane
+    } else if (wallY != 0.0f) {
+        glTranslatef(ballX, wallY, ballZ); // Project onto Y plane
+        glRotatef(90.0f, 1.0f, 0.0f, 0.0f); // Align with the Y plane
+    } else if (wallZ != 0.0f) {
+        glTranslatef(ballX, ballY, wallZ); // Project onto Z plane
+        // No rotation needed for Z plane
+    }
+
+    glColor3f(r, g, b); // Use custom color for the shadow
+    glScalef(1.0f, 1.0f, 0.01f); // Flatten the shadow to make it appear as a 2D projection
+    glutSolidSphere(0.5, 30, 30); // Render the shadow as a sphere
+    glPopMatrix();
+}
+
 void drawPaddle() {
     glColor3f(1.0f, 1.0f, 1.0f);
     glTranslatef(paddleX, paddleY, paddleZ);
     glScalef(3.5, 2.0, 0.7);
     glutSolidCube(1.0);
+}
+
+void drawPaddleShadow(float wallX, float wallY, float wallZ) {
+    glPushMatrix();
+
+    // Determine the projection plane and align the shadow
+    if (wallX != 0.0f) {
+        glTranslatef(wallX, paddleY, paddleZ); // Project onto X plane
+        glRotatef(90.0f, 0.0f, 1.0f, 0.0f); // Align with the X plane
+        glScalef(0.7f, 2.0f, 0.01f); // Scale to match paddle's height and depth
+    } else if (wallY != 0.0f) {
+        glTranslatef(paddleX, wallY, paddleZ); // Project onto Y plane
+        glRotatef(90.0f, 1.0f, 0.0f, 0.0f); // Align with the Y plane
+        glScalef(3.5f, 0.7f, 0.01f); // Scale to match paddle's width and depth
+    } else if (wallZ != 0.0f) {
+        glTranslatef(paddleX, paddleY, wallZ); // Project onto Z plane
+        glScalef(3.5f, 2.0f, 0.01f); // Scale to match paddle's width and height
+    }
+
+    glColor3f(1.0f, 0.0f, 0.0f); // Use custom color for the shadow
+    glBegin(GL_QUADS); // Render the shadow as a rectangle
+    glVertex3f(-0.5f, -0.5f, 0.0f);
+    glVertex3f(0.5f, -0.5f, 0.0f);
+    glVertex3f(0.5f, 0.5f, 0.0f);
+    glVertex3f(-0.5f, 0.5f, 0.0f);
+    glEnd();
+
+    glPopMatrix();
+}
+
+void drawShadows() {
+    // Draw ball shadows with custom colors
+    drawBallShadow(-9.9f, 0.0f, 0.0f, 0.0f, 1.0f, 0.0f); // Left wall (green)
+    drawBallShadow(9.9f, 0.0f, 0.0f, 1.0f, 0.0f, 0.0f); // Right wall (red)
+    drawBallShadow(0.0f, -9.9f, 0.0f, 0.0f, 0.0f, 1.0f); // Bottom wall (blue)
+    drawBallShadow(0.0f, 9.9f, 0.0f, 1.0f, 1.0f, 0.0f); // Top wall (yellow)
+
+    // Draw paddle shadows with custom colors
+    drawPaddleShadow(-9.9f, 0.0f, 0.0f); // Left wall
+    drawPaddleShadow(9.9f, 0.0f, 0.0f); // Right wall
+    drawPaddleShadow(0.0f, -9.9f, 0.0f); // Bottom wall
+    drawPaddleShadow(0.0f, 9.9f, 0.0f); // Top wall
 }
 
 // Transformations
@@ -273,8 +336,6 @@ void moveBall(int value) {
     glutTimerFunc(16, moveBall, 0); // ~60 FPS
 }
 
-
-
 // Display
 void display() {
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
@@ -284,6 +345,8 @@ void display() {
     transformCamera();
 
     drawBall();
+    drawShadows();
+
     drawWalls(); // the grey wall is at z=-6
     drawPaddle(); // the paddle is at z=5
 
