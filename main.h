@@ -3,7 +3,7 @@
 #include <math.h>
 #include <GL/glut.h> // (or others, depending on the system in use)
 #include <iostream>
-#include <Windows.h>
+//#include <Windows.h>
 #include <cstdlib>
 #include <ctime>
 

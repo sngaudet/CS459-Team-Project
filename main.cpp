@@ -17,6 +17,13 @@ Paddle:
     right arrow key: move right
     left arrow key: move left
 */
+// Window Vars
+int width = 700;
+int height = 700;
+
+// Game State
+float score = 0.0f;
+bool isRunning = true;
 
 float ballX = 0.0f;
 float ballY = 0.0f;
@@ -86,7 +93,7 @@ void updatePaddlePosition() {
         paddleY = topWall - paddleHalfHeight;
     }
 
-    glutPostRedisplay();
+    //glutPostRedisplay();
 }
 
 // Initilizations
@@ -370,12 +377,14 @@ void moveBall(int value) {
 
     updatePaddlePosition(); // Update paddle position based on key states
 
-    glutPostRedisplay();
-    glutTimerFunc(16, moveBall, 0); // ~60 FPS
+    //glutPostRedisplay();
+    //glutTimerFunc(16, moveBall, 0); // ~60 FPS
 }
 
 // Display
 void display() {
+
+    //printf("%d", local_tm.tm_sec);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     glLoadIdentity();
 
@@ -387,6 +396,47 @@ void display() {
 
     drawWalls(); // the grey wall is at z=-6
     drawPaddle(); // the paddle is at z=5
+    
+    // draw text
+    glDisable(GL_TEXTURE_2D); //added this
+    glMatrixMode(GL_PROJECTION);
+    glPushMatrix();
+    glLoadIdentity();
+    gluOrtho2D(0.0, 700, 0.0, 700);
+    glMatrixMode(GL_MODELVIEW);
+    glPushMatrix();
+    glLoadIdentity();
+    glRasterPos2i(10 , 700 - 15 - 10);
+    
+    char scoreString[255] = "Score: ";
+    sprintf_s(scoreString, "Score: %d", int(score));
+    int scoreStringLen = strlen(scoreString);
+    void* font = GLUT_BITMAP_TIMES_ROMAN_24;
+    for (int i = 0; i < scoreStringLen; ++i)
+    {
+        char c = scoreString[i];
+        glColor4f(1.0f, 1.0f, 1.0f, 1.0f);
+        glutBitmapCharacter(font, c);
+    }
+
+    if (!isRunning)
+    {
+        char gameoverString[255] = "Game Over!!";
+        glRasterPos2i(width / 2 - strlen(gameoverString) / 2 * 24, height / 2);
+        for (int i = 0; i < strlen(gameoverString); ++i)
+        {
+            char c = gameoverString[i];
+            glColor4f(1.0f, 0.0f, 0.0f, 1.0f);
+            glutBitmapCharacter(font, c);
+        }
+    }
+
+    glMatrixMode(GL_PROJECTION); //swapped this with...
+    glPopMatrix();
+    glMatrixMode(GL_MODELVIEW); //...this
+    glPopMatrix();
+    //added this
+    glEnable(GL_TEXTURE_2D);
 
     glFlush();
     glutSwapBuffers();
@@ -401,22 +451,46 @@ void resize(int w, int h) {
     glLoadIdentity();
 }
 
+void gameLoop(int fps)
+{
+    score += 1.0 / fps;
+
+    // move the ball
+    moveBall(0);
+
+    // see if ball is behind paddle
+    if (ballZ > paddleZ)
+    {
+        isRunning = false;
+    }
+
+    // update display frame
+    glutPostRedisplay();
+    if (isRunning)
+    {
+        glutTimerFunc((1.0 / fps) * 1000, gameLoop, fps);
+    }
+    else
+    {
+
+    }
+}
+
 int main(int argc, char** argv) {
     initWindow(argc, argv);
     initLighting();
     initInputHandlers(); // Initialize input handlers
-    printf("Mouse:\nzoom:    scroll wheel\nPan : right click drag\nRotate : left click drag\n\nKeyboard : (1, 2, 3) to toggle mode\nzoom : 1[w, s]\nPan : 2[w, a, s, d]\nRotate : 3[w, a, s, d]\n\nPaddle :\nup arrow key : move up\ndown arrow key : move down\nright arrow key : move right\nleft arrow key : move left");
+    printf("Mouse:\nzoom:    scroll wheel\nPan : right click drag\nRotate : left click drag\n\nKeyboard : (1, 2, 3) to toggle mode\nzoom : 1[w, s]\nPan : 2[w, a, s, d]\nRotate : 3[w, a, s, d]\n\nPaddle :\nup arrow key : move up\ndown arrow key : move down\nright arrow key : move right\nleft arrow key : move left\n");
 
     // render
     glutDisplayFunc(display);
     glutReshapeFunc(resize);
 
     srand(static_cast<unsigned>(time(0))); // seed RNG
-    glutTimerFunc(0, moveBall, 0);
+    glutTimerFunc(0, gameLoop, 60); // start game loop
 
     // TEMP, printing camera position
     //glutTimerFunc(5000, printCameraPosition, 0);
-
     // loop
     glutMainLoop();
     return 0;
