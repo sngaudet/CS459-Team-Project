@@ -36,21 +36,47 @@ float cameraZoomZ = 28.0f;
 float cameraPanX = 0.0f;
 float cameraPanY = -5.0f; // moves camera up if negative
 
-void specialKeyboard(int key, int x, int y) {
-    switch (key) {
-    case GLUT_KEY_LEFT:
-        paddleX -= 0.3f;
-        break;
-    case GLUT_KEY_RIGHT: 
-        paddleX += 0.3f;
-        break;
-    case GLUT_KEY_UP: 
-        paddleY += 0.3f;
-        break;
-    case GLUT_KEY_DOWN: 
-        paddleY -= 0.3f;
-        break;
+// Add key state tracking for paddle movement
+bool keyStates[256] = { false }; // For regular keys
+bool specialKeyStates[256] = { false }; // For special keys (e.g., arrow keys)
+
+// Paddle boundary constants
+const float leftWall = -10.0f;
+const float rightWall = 10.0f;
+const float bottomWall = -10.0f;
+const float topWall = 10.0f;
+const float paddleHalfWidth = 1.75f;
+const float paddleHalfHeight = 1.0f;
+
+// Function to handle key press events
+void specialKeyboardDown(int key, int x, int y) {
+    specialKeyStates[key] = true;
+}
+
+// Function to handle key release events
+void specialKeyboardUp(int key, int x, int y) {
+    specialKeyStates[key] = false;
+}
+
+// Function to update paddle position based on active key states
+void updatePaddlePosition() {
+    if (specialKeyStates[GLUT_KEY_LEFT]) {
+        paddleX -= 0.1f; // Adjust speed as needed
     }
+    if (specialKeyStates[GLUT_KEY_RIGHT]) {
+        paddleX += 0.1f;
+    }
+    if (specialKeyStates[GLUT_KEY_UP]) {
+        paddleY += 0.1f;
+    }
+    if (specialKeyStates[GLUT_KEY_DOWN]) {
+        paddleY -= 0.1f;
+    }
+
+    // Clamp paddle position within the walls
+    paddleX = std::max(leftWall + paddleHalfWidth, std::min(paddleX, rightWall - paddleHalfWidth));
+    paddleY = std::max(bottomWall + paddleHalfHeight, std::min(paddleY, topWall - paddleHalfHeight));
+
     glutPostRedisplay();
 }
 
@@ -93,7 +119,8 @@ void initLighting() {
 // Update input handling to use standalone functions
 void initInputHandlers() {
     glutKeyboardFunc(keyboard);
-    glutSpecialFunc(specialKeyboard);
+    glutSpecialFunc(specialKeyboardDown);
+    glutSpecialUpFunc(specialKeyboardUp); // Handle key release
     glutMouseFunc(mouse);
     glutMotionFunc(mouseMotion);
 }
@@ -269,11 +296,11 @@ void moveBall(int value) {
         }
     }
 
+    updatePaddlePosition(); // Update paddle position based on key states
+
     glutPostRedisplay();
     glutTimerFunc(16, moveBall, 0); // ~60 FPS
 }
-
-
 
 // Display
 void display() {
