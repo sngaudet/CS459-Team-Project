@@ -59,13 +59,6 @@ const float topWall = 10.0f;
 const float paddleHalfWidth = 1.75f;
 const float paddleHalfHeight = 1.0f;
 
-// change game difficulty (ball speed increases more quickly at higher difficulties
-void difficultyMenu(int choice) {
-    if (choice == 1) difficulty = -1.06; // easy
-    else if (choice == 2) difficulty = -1.13; // medium
-    else if (choice == 3) difficulty = -1.2; // hard
-}
-
 // Function to handle key press events
 void specialKeyboardDown(int key, int x, int y) {
     specialKeyStates[key] = true;
@@ -217,45 +210,6 @@ void drawWalls() {
         glVertex3f(-10.0f, -10.0f, i);
         glVertex3f(10.0f, -10.0f, i);
     }
-    glEnd();
-}
-
-void drawBox()
-{
-    glBegin(GL_QUADS);
-    glColor3f(1.0f, 0.0f, 0.0f);
-    // FRONT
-    glVertex3f(-0.5f, -0.5f, 0.5f);
-    glVertex3f(0.5f, -0.5f, 0.5f);
-    glVertex3f(0.5f, 0.5f, 0.5f);
-    glVertex3f(-0.5f, 0.5f, 0.5f);
-    // BACK
-    glVertex3f(-0.5f, -0.5f, -0.5f);
-    glVertex3f(-0.5f, 0.5f, -0.5f);
-    glVertex3f(0.5f, 0.5f, -0.5f);
-    glVertex3f(0.5f, -0.5f, -0.5f);
-    glColor3f(0.0f, 1.0f, 0.0f);
-    // LEFT
-    glVertex3f(-0.5f, -0.5f, 0.5f);
-    glVertex3f(-0.5f, 0.5f, 0.5f);
-    glVertex3f(-0.5f, 0.5f, -0.5f);
-    glVertex3f(-0.5f, -0.5f, -0.5f);
-    // RIGHT
-    glVertex3f(0.5f, -0.5f, -0.5f);
-    glVertex3f(0.5f, 0.5f, -0.5f);
-    glVertex3f(0.5f, 0.5f, 0.5f);
-    glVertex3f(0.5f, -0.5f, 0.5f);
-    glColor3f(0.0f, 0.0f, 1.0f);
-    // TOP
-    glVertex3f(-0.5f, 0.5f, 0.5f);
-    glVertex3f(0.5f, 0.5f, 0.5f);
-    glVertex3f(0.5f, 0.5f, -0.5f);
-    glVertex3f(-0.5f, 0.5f, -0.5f);
-    // BOTTOM
-    glVertex3f(-0.5f, -0.5f, 0.5f);
-    glVertex3f(-0.5f, -0.5f, -0.5f);
-    glVertex3f(0.5f, -0.5f, -0.5f);
-    glVertex3f(0.5f, -0.5f, 0.5f);
     glEnd();
 }
 
@@ -488,9 +442,6 @@ void gameLoop(int fps)
 }
 
 int main(int argc, char** argv) {
-    int menu;
-    bool showMenu = false;
-
     initWindow(argc, argv);
     initLighting();
     initInputHandlers(); // Initialize input handlers
@@ -500,19 +451,9 @@ int main(int argc, char** argv) {
     glutDisplayFunc(display);
     glutReshapeFunc(resize);
 
-    menu = glutCreateMenu(difficultyMenu);
-    glutAddMenuEntry("Easy", 1);
-    glutAddMenuEntry("Medium", 2);
-    glutAddMenuEntry("Hard", 3);
-
     srand(static_cast<unsigned>(time(0))); // seed RNG
     glutTimerFunc(0, gameLoop, 60); // start game loop
 
-    // TEMP, printing camera position
-    //glutTimerFunc(5000, printCameraPosition, 0);
-    // loop
-
-    //glutAttachMenu(); // only works for mouse buttons
     glutMainLoop();
     return 0;
 }
