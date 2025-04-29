@@ -298,7 +298,7 @@ void transformCamera() {
     glRotatef(cameraRotationY, 0.0f, 1.0f, 0.0f);
 }
 
-void moveBall(int value) {
+void moveBall() {
     ballX += ballVelocityX;
     ballY += ballVelocityY;
     ballZ -= ballVelocityZ;
@@ -421,7 +421,7 @@ void gameLoop(int fps)
     score += 1.0 / fps;
 
     // move the ball
-    moveBall(0);
+    moveBall();
 
     // see if ball is behind paddle
     if (ballZ > paddleZ)
